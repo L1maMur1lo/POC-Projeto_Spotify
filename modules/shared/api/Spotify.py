@@ -21,7 +21,7 @@ class SpotifyAPI:
         self.__client_secret = settings.CLIENT_SECRET
         self.__refresh_token = settings.REFRESH_TOKEN
 
-        self.__token: str = self.get_token()
+        self.__token: str = ''
         self.num_tryes: int = 0
 
     def get_token(self):
@@ -60,12 +60,7 @@ class SpotifyAPI:
             # Forçando erro
             raise Exception(error)
 
-    def get_track(self, id: str) -> dict:
-        logging.info('Solicitando "Track"...')
-
-        # Alterando a URL
-        url = settings.TRACKS_URL + f'/{id}'
-
+    def request_url(self, url:str) -> dict:
         # Requisitando informações
         response = requests.get(url=url, headers={'Authorization': self.__token})
 
@@ -84,7 +79,7 @@ class SpotifyAPI:
                 self.get_token()
 
                 # Executando novamente o metodo
-                return self.get_several_tracks(id)
+                return self.request_url(url)
 
         else:
             # Só aparece caso a renovação do token falhe mais de 3 vezes
@@ -96,6 +91,14 @@ class SpotifyAPI:
             logging.error(f'\n{"-" * 100}\n{error}\n{"-" * 100}')
             # Forçando erro
             raise Exception(error)
+
+    def get_track(self, id: str) -> dict:
+        logging.info('Solicitando "Track"...')
+
+        # Alterando a URL
+        url = settings.TRACKS_URL + f'/{id}'
+
+        return self.request_url(url)
 
     def get_several_tracks(self, ids: list[str]) -> dict:
         logging.info('Solicitando "Tracks"...')
@@ -105,33 +108,14 @@ class SpotifyAPI:
         # Alterando a URL
         url = settings.TRACKS_URL + f'?ids={str_tracks}'
 
-        # Requisitando informações
-        response = requests.get(url=url, headers={'Authorization': self.__token})
+        return self.request_url(url)
 
-        # Verificando se a request foi 'Sucesso'
-        if response.status_code == self.SUCESS:
-            logging.info('Sucesso na solicitação')
-            self.num_tryes = 0
-            return response.json()
+    def get_several_artists(self, ids: list[str]) -> dict:
+        logging.info('Solicitando "Artistas"...')
 
-        # Verificando se a resposta foi 'token expirado'
-        elif response.status_code == self.EXPIRED:
-            if self.num_tryes < self.MAX_TRYES:
-                logging.warning('Token expirado')
-                self.num_tryes += 1
-                # Renovando token
-                self.get_token()
+        # Muda a variavel
+        str_artists: str = ','.join(ids)
+        # Alterando a URL
+        url = settings.ARTISTS_URL + f'?ids={str_artists}'
 
-                # Executando novamente o metodo
-                return self.get_several_tracks(ids)
-
-        else:
-            # Só aparece caso a renovação do token falhe mais de 3 vezes
-            if self.num_tryes >= self.MAX_TRYES:
-                logging.warning('Número de tentativas excedido')
-
-            # Criando erro
-            error = f'{response.status_code} - {response.reason}'
-            logging.error(f'\n{"-" * 100}\n{error}\n{"-" * 100}')
-            # Forçando erro
-            raise Exception(error)
+        return self.request_url(url)

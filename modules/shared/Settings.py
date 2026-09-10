@@ -13,6 +13,7 @@ class Settings(BaseSettings):
 
     TOKEN_URL: str
     TRACKS_URL: str
+    ARTISTS_URL: str
 
 
 settings = Settings()
