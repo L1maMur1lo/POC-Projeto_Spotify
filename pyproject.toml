@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "SpotifyProject"
+version = "0.1.0"
+description = "Criando meu proprio wrapped"
+authors = [{name = "Murilo Lima", email = "mu.limajesus@hotmail.com"}]
+dependencies = [
+    "SQLAlchemy>=2.0.51",
+    "pydantic-settings>=2.15.0",
+    "numpy>=2.5.2",
+    "pandas>=3.0.5",
+    "requests>=2.34.2"
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["modules*"]
+
+[tool.ruff]
+line-length = 100
+extend-exclude = ['migrations']
+
+[tool.ruff.lint]
+preview = true
+select = ['I', 'F', 'E', 'W', 'PL', 'PT']
+ignore = ["PLR6301", "PLW0717"]
+
+[tool.ruff.format]
+preview = true
+quote-style = 'single'
+
+[tool.taskipy.tasks]
+lint = 'ruff check'
+lint_fix = 'ruff check --fix'
+format = 'ruff format'
+freeze = 'pip freeze > requirements.txt'

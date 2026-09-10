@@ -1,0 +1,6 @@
+# Requisitos para desenvolvimento (local)
+
+alembic>=1.19.1
+psycopg2>=2.9.12
+ruff>=0.16.5
+taskipy>=1.14.1

@@ -1,0 +1,7 @@
+# Arquivos locais
+.env
+*.log
+
+# Pastas locais
+migrations/
+

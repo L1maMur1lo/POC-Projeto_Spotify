@@ -1,0 +1,13 @@
+pyproject.toml
+SpotifyProject.egg-info/PKG-INFO
+SpotifyProject.egg-info/SOURCES.txt
+SpotifyProject.egg-info/dependency_links.txt
+SpotifyProject.egg-info/requires.txt
+SpotifyProject.egg-info/top_level.txt
+modules/__init__.py
+modules/shared/Settings.py
+modules/shared/__init__.py
+modules/shared/database/Connection.py
+modules/shared/database/Models.py
+modules/shared/database/Services.py
+modules/shared/database/__init__.py
