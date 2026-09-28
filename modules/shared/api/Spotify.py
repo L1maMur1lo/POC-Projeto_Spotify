@@ -60,7 +60,7 @@ class SpotifyAPI:
             # Forçando erro
             raise Exception(error)
 
-    def request_url(self, url:str) -> dict:
+    def request_url(self, url: str) -> dict:
         # Requisitando informações
         response = requests.get(url=url, headers={'Authorization': self.__token})
 

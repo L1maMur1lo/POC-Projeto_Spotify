@@ -1,6 +1,6 @@
 import logging
 import re
-from datetime import datetime
+from datetime import datetime, timezone
 
 from sqlalchemy.orm import Session
 
@@ -75,10 +75,16 @@ class Process_Queue:
             execution.ms_played = data.ms_played
 
             if data.offline:
-                timestamp_segundos = data.timestamp_off / 1000.0
-                execution.played_at = datetime.fromtimestamp(timestamp_segundos)
+                if data.timestamp_off > 10000000000: 
+                    timestamp_segundos = data.timestamp_off / 1000.0
+                else:
+                    timestamp_segundos = data.timestamp_off
+                
+                execution.played_at = datetime.fromtimestamp(timestamp_segundos, tz=timezone.utc)
+            
             else:
                 execution.played_at = data.played_at
+
             execution.offline = data.offline
 
             # Criado para controle de origem
@@ -157,6 +163,7 @@ class Process_Queue:
 
                 logging.info(f'Numero de execuções atual: {self.process}')
                 self.session.commit()
+                logging.info(f'Execuções salvas')
 
         except Exception as error:
             self.session.rollback()

@@ -98,6 +98,7 @@ class Create_Queue:
             logging.info(f'Sucesso: {self.rows_sucess}')
             logging.info(f'Total: {rows_total}')
 
+            self.session.commit()
             os.rename(
                 f'{self.data_path}/{file}',
                 f'{self.data_path}/{file.replace(".json", "")}-processado.json',

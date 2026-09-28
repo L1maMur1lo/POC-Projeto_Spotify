@@ -1,9 +1,12 @@
 import logging
+
 from sqlalchemy import select, update
-from modules.shared.database.Models import ArtistsModel
 from sqlalchemy.orm import Session
-from modules.shared.database.Connection import get_session
+
 from modules.shared.api.Spotify import SpotifyAPI
+from modules.shared.database.Connection import get_session
+from modules.shared.database.Models import ArtistsModel
+
 
 class Complete_Data:
     SIZE_BATCH = 50
@@ -25,11 +28,18 @@ class Complete_Data:
         for batch in self.chunked(missing, self.SIZE_BATCH):
             response = self.spotify.get_several_artists(batch)
 
+            img_url = None
             for artist_data in response['artists']:
                 try:
-                    img_url = artist_data['images'][0]['url']
+                    for image in artist_data['images']:
+                        if image['height'] == 320 and image['width'] == 320:
+                            img_url = image['url']
+
+                    if img_url is None:
+                        logging.info('Imagem não encontrada')
+
                 except Exception:
-                    img_url = None
+                    pass
 
                 statement = (
                     update(ArtistsModel)
@@ -41,6 +51,7 @@ class Complete_Data:
                 logging.debug(f'Adicionada a imagem do artista: {artist_data["name"]}')
 
             self.session.commit()
+
 
 if __name__ == '__main__':
     logFileName = 'Complete_Data.log'
